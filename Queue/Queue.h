@@ -1,1 +1,9 @@
-#pragma once
+#ifndef QUEUE_H
+#define QUEUE_H
+
+template <typename T>
+class Queue{
+  
+}
+
+#endif
