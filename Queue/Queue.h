@@ -29,7 +29,7 @@ class PriorityQueue : Queue{
     T& pop();
     void push(int);
 private:
-    const Queue<T> container[10];
+    Queue<T> container[10];
 };
 
 #endif 
