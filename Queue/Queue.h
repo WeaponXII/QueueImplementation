@@ -1,5 +1,6 @@
 #ifndef QUEUE_H
 #define QUEUE_H
+#include <iostream>
 
 template<typename T>
 class Queue{
@@ -7,15 +8,28 @@ public:
     Queue();
     Queue(const Queue&);
     Queue(Queue&&);
-    ~Queue();
+    virtual ~Queue();
+
+    int getSize();
+    int getCapacity();
 
     T& pop();
     void push(const T&);
-    void print();
 
+    virtual const Queue& operator=(const Queue&);
+    virtual const Queue& operator=(Queue&&);
+    virtual const Queue& operator+(const Queue&);
+    virtual const Queue& operator+(const T&);
+    virtual bool operator==(const Queue&);
+    
+    template<typename R>
+    friend std::ostream& operator<<<R>(std::ostream&, const Queue<R>&);
+    template<typename R>
+    friend void operator>><R>(std::istream&, const Queue<R>&);
 private:
     void resize(int);
     int size;
+    int capacity;
     T * head;
 };
 
@@ -28,8 +42,14 @@ class PriorityQueue : Queue{
 
     T& pop();
     void push(int);
+
+    PirorityQueue& operator=(const PriorityQueue&);
+    PirorityQueue& operator=(PriorityQueue&&);
+    PriorityQueue& operator+();
+    bool operator==(const Queue&);
 private:
     Queue<T> container[10];
 };
 
+#include "Queue.cpp.h"
 #endif 
