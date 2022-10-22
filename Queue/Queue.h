@@ -40,7 +40,6 @@ class PriorityQueue : Queue{
     PriorityQueue(PriorityQueue&&);
     ~PriorityQueue();
 
-    T& pop();
     void push(int);
 
     PirorityQueue& operator=(const PriorityQueue&);
