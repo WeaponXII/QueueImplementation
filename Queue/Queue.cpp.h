@@ -147,6 +147,18 @@ const PriorityQueue<T>& PriorityQueue<T>::operator=(const PriorityQueue& obj) {
         container[i] = obj.container[i];
     return *this;
 }
+template<typename T>
+PriorityQueue<T>::PriorityQueue(const PriorityQueue& obj) {
+    size = obj.size;
+    capacity = obj.capacity;
+    delete[] head;
+    head = new T[capacity];
+    for (int i = 0; i < size; i++)
+        head[i] = obj.head[i];
+    for (int i = 0; i < 10; i++)
+        container[i] = obj.container[i];
+}
+
 
 template<typename T>
 bool PriorityQueue<T>::operator==(const PriorityQueue& obj) {
@@ -163,7 +175,7 @@ bool PriorityQueue<T>::operator==(const PriorityQueue& obj) {
     return true;
 }
 template<typename T>
-const PriorityQueue<T>& PriorityQueue<T>::operator=(const PriorityQueue&& obj) {
+const PriorityQueue<T>& PriorityQueue<T>::operator=(PriorityQueue&& obj) {
     size = obj.size;
     capacity = obj.capacity;
     delete head;
@@ -174,11 +186,20 @@ const PriorityQueue<T>& PriorityQueue<T>::operator=(const PriorityQueue&& obj) {
         container[i] = obj.container[i];
     return *this;
 }
-PriorityQueue<T>::PriorityQueue() {
-}
-
 template<typename T>
-const PriorityQueue<T>& PriorityQueue<T>::operator+()
+PriorityQueue<T>::PriorityQueue(PriorityQueue&& obj) {
+    size = obj.size;
+    capacity = obj.capacity;
+    delete head;
+    head = new T[capacity];
+    for (int i = 0; i < size; i++)
+        head[i] = obj.head[i];
+    for (int i = 0; i < 10; i++)
+        container[i] = obj.container[i];
+}
+template<typename T>
+const PriorityQueue<T>& PriorityQueue<T>::operator+(const PriorityQueue& obj)
 {
-    //Add other priority queue
+    for (int i = 0; i < 10; i++)
+        container[i] + obj.container[i];
 }

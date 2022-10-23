@@ -40,11 +40,11 @@ class PriorityQueue : Queue{
     PriorityQueue(PriorityQueue&&);
     ~PriorityQueue();
 
-    void push(int);//Int to set the object's position in the queue, push to container with same priority.
+    void push(int);//Int to set the object's priority in the queue, push to container with same priority.
     Queue& pop();
     PriorityQueue& operator=(const PriorityQueue&);
     PriorityQueue& operator=(PriorityQueue&&);
-    PriorityQueue& operator+();
+    PriorityQueue& operator+(const PriorityQueue&);
     bool operator==(const PriorityQueue&);
 private:
     Queue<T> container[10];
