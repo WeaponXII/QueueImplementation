@@ -21,27 +21,26 @@ public:
     virtual const Queue& operator+(const Queue&);
     virtual const Queue& operator+(const T&);
     virtual bool operator==(const Queue&);
-    const T& operator--(const T&);
-    template<typename R>
-    friend std::ostream& operator<< <R>(std::ostream&, const Queue<R>&);
-    template<typename R>
-    friend void operator>><R>(std::istream&, const Queue<R>&);
+    const T& operator--();
+    friend std::ostream& operator<<(std::ostream&, const Queue<T>&);
+    friend void operator>>(std::istream&, const Queue<T>&);
 private:
-    void resize(int);
+    void resize(int new_cap = -1);
     int size;
     int capacity;
     T * head;
 };
 
 template<typename T>
-class PriorityQueue : Queue{
+class PriorityQueue : Queue<T>{
+public:
     PriorityQueue();
     PriorityQueue(const PriorityQueue&);
     PriorityQueue(PriorityQueue&&);
     ~PriorityQueue();
 
     void push(int);//Int to set the object's priority in the queue, push to container with same priority.
-    Queue& pop();
+    Queue<T>& pop();
     PriorityQueue& operator=(const PriorityQueue&);
     PriorityQueue& operator=(PriorityQueue&&);
     PriorityQueue& operator+(const PriorityQueue&);
