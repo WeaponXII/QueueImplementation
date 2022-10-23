@@ -21,9 +21,9 @@ public:
     virtual const Queue& operator+(const Queue&);
     virtual const Queue& operator+(const T&);
     virtual bool operator==(const Queue&);
-    
+    const T& operator--(const T&);
     template<typename R>
-    friend std::ostream& operator<<<R>(std::ostream&, const Queue<R>&);
+    friend std::ostream& operator<< <R>(std::ostream&, const Queue<R>&);
     template<typename R>
     friend void operator>><R>(std::istream&, const Queue<R>&);
 private:
@@ -40,12 +40,12 @@ class PriorityQueue : Queue{
     PriorityQueue(PriorityQueue&&);
     ~PriorityQueue();
 
-    void push(int);
-
-    PirorityQueue& operator=(const PriorityQueue&);
-    PirorityQueue& operator=(PriorityQueue&&);
+    void push(int);//Int to set the object's position in the queue, push to container with same priority.
+    Queue& pop();
+    PriorityQueue& operator=(const PriorityQueue&);
+    PriorityQueue& operator=(PriorityQueue&&);
     PriorityQueue& operator+();
-    bool operator==(const Queue&);
+    bool operator==(const PriorityQueue&);
 private:
     Queue<T> container[10];
 };

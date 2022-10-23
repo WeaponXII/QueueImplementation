@@ -1,3 +1,4 @@
+#include "Queue.h"
 template<typename T>
 Queue<T>::Queue(){
     head = nullptr;
@@ -17,7 +18,7 @@ Queue<T>::Queue(const Queue& obj){
 template<typename T>
 Queue<T>::Queue(Queue&&){
     size = obj.size;
-    capcity = obj.capacity
+    capacity = obj.capacity
     head = obj.head;
     obj.head = nullptr;
 }
@@ -114,7 +115,7 @@ bool Queue<T>::operator==(const Queue& obj){
 }
 
 template<typename R>
-std::ostream& operator<<(std::ostream& out, const Queue<R>& obj){
+friend std::ostream& operator<<<R>(std::ostream& out, const Queue<R>& obj){
     out << "[";
     for(int i = 0; i < size - 1; i++)
         out << head[i] << ", ";
@@ -125,4 +126,59 @@ template<typename R>
 void operator>>(std::istream& in, const Queue<R>& obj){
     for(int i = 0; i < in.gcount(); i++)
         push(in >>);
+}
+
+template<typename T>
+PriorityQueue<T>::~PriorityQueue() {
+    delete[] head;
+    size = 0;
+    capacity = 0;
+    delete[] container;
+}
+template<typename T>
+const PriorityQueue<T>& PriorityQueue<T>::operator=(const PriorityQueue& obj) {
+    size = obj.size;
+    capacity = obj.capacity;
+    delete[] head;
+    head = new T[capacity];
+    for (int i = 0; i < size; i++)
+        head[i] = obj.head[i];
+    for (int i = 0; i < 10; i++)
+        container[i] = obj.container[i];
+    return *this;
+}
+
+template<typename T>
+bool PriorityQueue<T>::operator==(const PriorityQueue& obj) {
+    if (size != obj.size)
+        return false;
+    if (capacity != obj.capacity)
+        return false;
+    for (int i = 0; i < size; i++)
+        if (head[i] != obj.head[i])
+            return false;
+    for (int i = 0; i < 10; i++)
+        if (container[i] != obj.container[i])
+            return false;
+    return true;
+}
+template<typename T>
+const PriorityQueue<T>& PriorityQueue<T>::operator=(const PriorityQueue&& obj) {
+    size = obj.size;
+    capacity = obj.capacity;
+    delete head;
+    head = new T[capacity];
+    for (int i = 0; i < size; i++)
+        head[i] = obj.head[i];
+    for (int i = 0; i < 10; i++)
+        container[i] = obj.container[i];
+    return *this;
+}
+PriorityQueue<T>::PriorityQueue() {
+}
+
+template<typename T>
+const PriorityQueue<T>& PriorityQueue<T>::operator+()
+{
+    //Add other priority queue
 }
