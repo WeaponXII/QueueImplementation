@@ -85,6 +85,7 @@ const Queue<T>& Queue<T>::operator=(Queue&& obj){
     capacity = obj.capacity;
     head = obj.head;
     obj.head = nullptr;
+    return *this;
 }
 
 template<typename T>
@@ -109,7 +110,7 @@ bool Queue<T>::operator==(const Queue& obj){
     if(capacity != obj.capacity)
         return false;
     for(int i = 0; i < size; i++)
-        if(head[i] != obj[i])
+        if(head[i] != obj.head[i])
             return false;
     return true;
 }
@@ -129,12 +130,21 @@ void operator>>(std::istream& in, const Queue<T>& obj){
 }
 
 template<typename T>
+void PriorityQueue<T>::push(int x,T& t)
+{
+    //Pushes object to queue at priority for object
+    Queue<T> temp = container[x];
+    temp.push(t);
+}
+
+template<typename T>
 PriorityQueue<T>& PriorityQueue<T>::operator=(const PriorityQueue& obj) {
 
     for (int i = 0; i < 10; i++)
         container[i] = obj.container[i];
     return *this;
 }
+
 template<typename T>
 PriorityQueue<T>::PriorityQueue(const PriorityQueue& obj) {
     for (int i = 0; i < 10; i++)
@@ -168,3 +178,4 @@ PriorityQueue<T>& PriorityQueue<T>::operator+(const PriorityQueue& obj)
     for (int i = 0; i < 10; i++)
         container[i] + obj.container[i];
 }
+

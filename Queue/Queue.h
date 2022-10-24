@@ -32,14 +32,14 @@ private:
 };
 
 template<typename T>
-class PriorityQueue : Queue<T>{
+class PriorityQueue : public Queue<T>{
 public:
-    PriorityQueue();
+    PriorityQueue(){};
     PriorityQueue(const PriorityQueue&);
     PriorityQueue(PriorityQueue&&);
-    ~PriorityQueue();
+    ~PriorityQueue(){};
 
-    void push(int);//Int to set the object's priority in the queue, push to container with same priority.
+    void push(int, T&);//Int to set the object's priority in the queue, push to container with same priority.
     Queue<T>& pop();
     PriorityQueue& operator=(const PriorityQueue&);
     PriorityQueue& operator=(PriorityQueue&&);
