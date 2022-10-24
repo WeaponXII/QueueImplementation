@@ -23,9 +23,9 @@ public:
     virtual bool operator==(const Queue&);
     const T& operator--();
     template<typename R>
-    friend std::ostream& operator<<<R>(std::ostream&, const Queue<R>&);
+    friend std::ostream& operator<<(std::ostream&, const Queue<R>&);
     template<typename R>
-    friend void operator>><R>(std::istream&, const Queue<R>&);
+    friend void operator>>(std::istream&, const Queue<R>&);
 private:
     void resize(int new_cap = -1);
     int size;

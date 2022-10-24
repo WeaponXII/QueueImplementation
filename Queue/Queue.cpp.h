@@ -1,9 +1,10 @@
 #include "Queue.h"
 template<typename T>
 Queue<T>::Queue(){
-    head = nullptr;
+    
     size = 0;
     capacity = 0;
+    head = nullptr;
 }
 
 template<typename T>
@@ -12,7 +13,7 @@ Queue<T>::Queue(const Queue& obj){
     capacity = obj.capacity;
     head = new T[capacity];
     for(int i = 0; i < size; i++)
-        head[i] == obj.head[i];
+        head[i] = obj.head[i];
 }
 
 template<typename T>
@@ -41,7 +42,7 @@ T& Queue<T>::pop(){
     }
     head++;
     size--;
-    return head - 1;
+    return *(head - 1);
 }
 
 template<typename T>
@@ -49,7 +50,7 @@ void Queue<T>::push(const T& obj){
     if(size == capacity - 1){
         resize();
     }
-    head[size++] = obj;
+    head[++size] = obj;
 }
 
 template<typename T>
@@ -90,9 +91,9 @@ const Queue<T>& Queue<T>::operator=(Queue&& obj){
 template<typename T>
 bool Queue<T>::isEmpty() {
     if (size == 0)
-        return true
+        return true;
     else
-        return false
+        return false;
 }
 template<typename T>
 const Queue<T>& Queue<T>::operator+(const Queue& obj){
@@ -139,20 +140,31 @@ std::ostream& operator<<(std::ostream& out, const Queue<R>& obj){
     for(int i = 0; i < obj.size - 1; i++)
         out << obj.head[i] << ", ";
     out << obj.head[obj.size - 1] << "]" << std::endl; 
+    return out;
 }
 
 template<typename R>
 void operator>>(std::istream& in, const Queue<R>& obj){
     for (int i = 0; i < in.gcount(); i++)
         obj.push(in);
+    return in;
 }
 
 template<typename T>
 void PriorityQueue<T>::push(int x,T& t)
 {
+    t = t - 1; //Converts user input to zero-based index to interface with array
     //Pushes object to queue at priority for object
-    Queue<T> temp = container[x];
-    temp.push(t);
+    if ((t<0) || (t > 9))
+    {
+        std::range_error err("Cannot set priority less than 1 or greater than 10");
+        throw(err);
+    }
+    else {
+        Queue<T> temp = container[x];
+        temp.push(t);
+    }
+    
 }
 
 template<typename T>
