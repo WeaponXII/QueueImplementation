@@ -12,8 +12,8 @@ public:
 
     int getSize();
     int getCapacity();
-
-    T& pop();
+    virtual bool isEmpty();
+    virtual T& pop();
     void push(const T&);
 
     virtual const Queue& operator=(const Queue&);
@@ -22,8 +22,10 @@ public:
     virtual const Queue& operator+(const T&);
     virtual bool operator==(const Queue&);
     const T& operator--();
-    friend std::ostream& operator<<(std::ostream&, const Queue<T>&);
-    friend void operator>>(std::istream&, const Queue<T>&);
+    template<typename R>
+    friend std::ostream& operator<<<R>(std::ostream&, const Queue<R>&);
+    template<typename R>
+    friend void operator>><R>(std::istream&, const Queue<R>&);
 private:
     void resize(int new_cap = -1);
     int size;
@@ -39,14 +41,16 @@ public:
     PriorityQueue(PriorityQueue&&);
     ~PriorityQueue(){};
 
-    void push(int, T&);//Int to set the object's priority in the queue, push to container with same priority.
-    Queue<T>& pop();
+    void push(int, T&);//Int to set the object's priority in the queue, push value to queue in container with same priority.
+    T& pop();//Pop removes and returns one item from the current queue
+    bool isEmpty();
+
     PriorityQueue& operator=(const PriorityQueue&);
     PriorityQueue& operator=(PriorityQueue&&);
     PriorityQueue& operator+(const PriorityQueue&);
     bool operator==(const PriorityQueue&);
 private:
-    Queue<T> container[10];
+    Queue<T> container[10];//Container number is priority,1 lowest, 10 highest
 };
 
 #include "Queue.cpp.h"

@@ -87,7 +87,13 @@ const Queue<T>& Queue<T>::operator=(Queue&& obj){
     obj.head = nullptr;
     return *this;
 }
-
+template<typename T>
+bool Queue<T>::isEmpty() {
+    if (size == 0)
+        return true
+    else
+        return false
+}
 template<typename T>
 const Queue<T>& Queue<T>::operator+(const Queue& obj){
     for(int i = 0; i < obj.size; i++)
@@ -116,15 +122,27 @@ bool Queue<T>::operator==(const Queue& obj){
 }
 
 template<typename T>
-std::ostream& operator<<(std::ostream& out, const Queue<T>& obj){
+const T& Queue<T>::operator--()
+{
+    if (size == 0) {
+        std::range_error err("Cannot pop empty Queue.");
+        throw(err);
+    }
+    head++;
+    size--;
+    return head - 1;
+}
+
+template<typename R>
+std::ostream& operator<<(std::ostream& out, const Queue<R>& obj){
     out << "[";
     for(int i = 0; i < obj.size - 1; i++)
         out << obj.head[i] << ", ";
     out << obj.head[obj.size - 1] << "]" << std::endl; 
 }
 
-template<typename T>
-void operator>>(std::istream& in, const Queue<T>& obj){
+template<typename R>
+void operator>>(std::istream& in, const Queue<R>& obj){
     for (int i = 0; i < in.gcount(); i++)
         obj.push(in);
 }
@@ -177,5 +195,27 @@ PriorityQueue<T>& PriorityQueue<T>::operator+(const PriorityQueue& obj)
 {
     for (int i = 0; i < 10; i++)
         container[i] + obj.container[i];
+}
+template<typename T>
+bool PriorityQueue<T>::isEmpty() {
+    Queue<T> q = container[0];
+    return q.isEmpty();
+}
+template<typename T>
+T& PriorityQueue<T>::pop() {
+
+    if (isEmpty()) {
+        std::range_error err("Cannot pop empty Queue.");
+        throw(err);
+    }
+    else {
+        for (int i = 9; i >= 0; i--) {
+            Queue<T> temp = container[i];
+            if (!temp.isEmpty())
+                return temp.pop();
+            else
+                continue;
+        }
+    }
 }
 
