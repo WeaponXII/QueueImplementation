@@ -1,14 +1,7 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 #include <iostream>
-/*
-template<typename T>
-class Queue ;
-template <typename R>
-std::ostream& operator<<(std::ostream&, const Queue<R>&);
-template <typename R>
-std::istream& operator>>(std::istream&, const Queue<R>&);
-*/
+
 const int MAX_PRIO = 10;
 
 template <typename T>
@@ -19,16 +12,16 @@ public:
     Queue(Queue&&);
     virtual ~Queue();
 
-    bool isEmpty();
+    bool isEmpty() const;
 
     virtual T& pop();   
     virtual void push(const T&);
 
+    virtual Queue& operator=(const Queue&);
     virtual Queue& operator=(Queue&&);
     virtual Queue& operator+(const Queue&);
-    virtual Queue& operator=(const Queue&);
     virtual Queue& operator+(const T&);
-    virtual const bool operator==(const Queue&);
+    virtual bool operator==(const Queue&) const;
      
     template <typename R>
     friend std::ostream& operator<<(std::ostream&, const Queue<R>&);
@@ -36,6 +29,7 @@ public:
     friend std::istream& operator>>(std::istream&, Queue<R>&);
 private:
     void resize(int);
+    int pop_count;
     int size;
     int capacity;
     T * head;
@@ -54,8 +48,9 @@ public:
     void push(const int, const Queue<T>&);
 
     PriorityQueue& operator=(const PriorityQueue&);
+    PriorityQueue& operator=(PriorityQueue&&);
     PriorityQueue& operator+(const PriorityQueue&);
-    const bool operator==(const PriorityQueue&);
+    bool operator==(const PriorityQueue&) const;
 
     template <typename R>
     friend std::ostream& operator<<(std::ostream&, const PriorityQueue<R>&);
