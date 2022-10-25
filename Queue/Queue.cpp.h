@@ -1,6 +1,7 @@
 template<typename T>
 Queue<T>::Queue(){
     size = 0;
+    pop_count = 0;
     capacity = 5;
     head = new T[capacity];
 }
@@ -8,6 +9,7 @@ Queue<T>::Queue(){
 template<typename T>
 Queue<T>::Queue(const Queue& obj){
     size = obj.size;
+    pop_count = 0;
     capacity = obj.capacity;
     head = new T[capacity];
     for(int i = 0; i < size; i++)
@@ -24,11 +26,11 @@ Queue<T>::Queue(Queue&&){
 
 template<typename T>
 Queue<T>::~Queue(){
-    delete[] head;
+    delete[] (head - pop_count);
 }
 
 template<typename T>
-bool Queue<T>::isEmpty(){return size == 0;}
+bool Queue<T>::isEmpty() const{return size == 0;}
 
 template<typename T>
 T& Queue<T>::pop(){
@@ -36,16 +38,19 @@ T& Queue<T>::pop(){
         range_error err("Cannot pop empty Queue.");
         throw(err);
     }
-    head++;
+    if(size + 1 == capacity || pop_count >= capacity)
+        resize(capacity * 2);
     size--;
     capacity--;
+    pop_count++;
+    head++;
     return *(head - 1);
 }
 
 template<typename T>
 void Queue<T>::push(const T& obj){
     if(size == capacity){
-        resize(-1);
+        resize(capacity * 2);
     }
     head[size++] = obj;
 }
@@ -53,14 +58,12 @@ void Queue<T>::push(const T& obj){
 
 template<typename T>
 void Queue<T>::resize(int new_cap){
-    if(new_cap < 0)
-        capacity += capacity / 2;
-    else 
-        capacity = new_cap;
+    capacity = new_cap;
     T * swap = new T[size];
     for(int i = 0; i < size; i++)
         swap[i] = head[i];
-    delete[] head;
+    delete[] (head - pop_count);
+    pop_count = 0;
     head = new T[capacity];
     for(int i = 0; i < size; i++)
         head[i] = swap[i];
@@ -71,7 +74,8 @@ template<typename T>
 Queue<T>& Queue<T>::operator=(const Queue& obj){
     size = obj.size;
     capacity = obj.capacity;
-    delete head;
+    delete[] (head - pop_count);
+    pop_count = 0;
     head = new T[capacity];
     for(int i = 0; i < size; i++)
         head[i] = obj.head[i];
@@ -80,9 +84,12 @@ Queue<T>& Queue<T>::operator=(const Queue& obj){
 
 template<typename T>
 Queue<T>& Queue<T>::operator=(Queue&& obj){
+    if(*this  == obj)
+        return *this;
     size = obj.size;
     capacity = obj.capacity;
     head = obj.head;
+    pop_count = obj.pop_count;
     obj.head = nullptr;
 
     return *this;
@@ -104,7 +111,7 @@ Queue<T>& Queue<T>::operator+(const T& obj){
 }
 
 template<typename T>
-const bool Queue<T>::operator==(const Queue& obj){
+bool Queue<T>::operator==(const Queue& obj) const{
     if(size != obj.size)
         return false;
     if(capacity != obj.capacity)
@@ -152,8 +159,12 @@ PriorityQueue<T>::PriorityQueue(const PriorityQueue& obj){
         container[i] = obj.container[i];
 }
 
-
-
+template<typename T>
+PriorityQueue<T>::PriorityQueue(PriorityQueue&& obj){
+    std::cout << "Priority Queue Moved." << std::endl;
+    for(int i = 0; i < MAX_PRIO; i++)
+        container[i] = std::move(obj.container[i]);
+}
 
 template<typename T>
 T& PriorityQueue<T>::pop(){
@@ -165,7 +176,7 @@ T& PriorityQueue<T>::pop(){
 template<typename T>
 void PriorityQueue<T>::push(const T& obj){
     int i = MAX_PRIO - 1;
-    for(i; 0 <= i && container[i].isEmpty(); i--);
+    for(i; 0 < i && container[i].isEmpty(); i--);
     container[i].push(obj);
 }
 
@@ -186,6 +197,13 @@ PriorityQueue<T>& PriorityQueue<T>::operator=(const PriorityQueue& obj){
     return *this;
 }
 
+template<typename T>
+PriorityQueue<T>& PriorityQueue<T>::operator=(PriorityQueue&& obj){
+    for(int i = 0; i < MAX_PRIO; i++)
+        container[i] = std::move(obj.container[i]);
+    return *this;
+    }
+
 
 template<typename T>
 PriorityQueue<T>& PriorityQueue<T>::operator+(const PriorityQueue& obj){
@@ -195,7 +213,32 @@ PriorityQueue<T>& PriorityQueue<T>::operator+(const PriorityQueue& obj){
 }
 
 template<typename T>
-const bool PriorityQueue<T>::operator==(const PriorityQueue& obj){
-
+bool PriorityQueue<T>::operator==(const PriorityQueue& obj) const{
+    for(int i = 0; i < MAX_PRIO; i++)
+        if(!(container[i] == obj.container[i]))
+            return false;
+    return true;
 }
 
+template<typename T>
+std::ostream& operator<<(std::ostream& out, const PriorityQueue<T>& obj){
+    out << "{";
+    for(int i = 0; i < MAX_PRIO; i++){
+        if(obj.container[i].isEmpty())
+            out << "[P" << i + 1 << "][]";
+        else
+            out << "[P"<< i + 1 << "]" << obj.container[i];
+    }
+    out << "}";
+
+    return out;
+}
+
+// Requires user to enter length of their input first 
+template<typename T>
+std::istream& operator>>(std::istream& in, PriorityQueue<T>& obj){
+    for(int i = 0; i < MAX_PRIO; i++)
+        in >> obj.container[i];
+
+    return in;
+}
