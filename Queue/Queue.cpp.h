@@ -1,7 +1,7 @@
 template<typename T>
 Queue<T>::Queue(){
     size = 0;
-    pop_count = 0;
+    dequeue_count = 0;
     capacity = 5;
     head = new T[capacity];
 }
@@ -9,7 +9,7 @@ Queue<T>::Queue(){
 template<typename T>
 Queue<T>::Queue(const Queue& obj){
     size = obj.size;
-    pop_count = 0;
+    dequeue_count = 0;
     capacity = obj.capacity;
     head = new T[capacity];
     for(int i = 0; i < size; i++)
@@ -17,7 +17,7 @@ Queue<T>::Queue(const Queue& obj){
 }
 
 template<typename T>
-Queue<T>::Queue(Queue&&){
+Queue<T>::Queue(Queue&& obj){
     size = obj.size;
     capacity = obj.capacity;
     head = obj.head;
@@ -26,29 +26,29 @@ Queue<T>::Queue(Queue&&){
 
 template<typename T>
 Queue<T>::~Queue(){
-    delete[] (head - pop_count);
+    delete[] (head - dequeue_count);
 }
 
 template<typename T>
 bool Queue<T>::isEmpty() const{return size == 0;}
 
 template<typename T>
-T& Queue<T>::pop(){
+T& Queue<T>::dequeue(){
     if(size == 0){
-        range_error err("Cannot pop empty Queue.");
+        std::range_error err("Cannot dequeue empty Queue.");
         throw(err);
     }
-    if(size + 1 == capacity || pop_count >= capacity)
+    if(size + 1 == capacity || dequeue_count >= capacity)
         resize(capacity * 2);
     size--;
     capacity--;
-    pop_count++;
+    dequeue_count++;
     head++;
     return *(head - 1);
 }
 
 template<typename T>
-void Queue<T>::push(const T& obj){
+void Queue<T>::enqueue(const T& obj){
     if(size == capacity){
         resize(capacity * 2);
     }
@@ -62,8 +62,8 @@ void Queue<T>::resize(int new_cap){
     T * swap = new T[size];
     for(int i = 0; i < size; i++)
         swap[i] = head[i];
-    delete[] (head - pop_count);
-    pop_count = 0;
+    delete[] (head - dequeue_count);
+    dequeue_count = 0;
     head = new T[capacity];
     for(int i = 0; i < size; i++)
         head[i] = swap[i];
@@ -74,8 +74,8 @@ template<typename T>
 Queue<T>& Queue<T>::operator=(const Queue& obj){
     size = obj.size;
     capacity = obj.capacity;
-    delete[] (head - pop_count);
-    pop_count = 0;
+    delete[] (head - dequeue_count);
+    dequeue_count = 0;
     head = new T[capacity];
     for(int i = 0; i < size; i++)
         head[i] = obj.head[i];
@@ -89,7 +89,7 @@ Queue<T>& Queue<T>::operator=(Queue&& obj){
     size = obj.size;
     capacity = obj.capacity;
     head = obj.head;
-    pop_count = obj.pop_count;
+    dequeue_count = obj.dequeue_count;
     obj.head = nullptr;
 
     return *this;
@@ -98,7 +98,7 @@ Queue<T>& Queue<T>::operator=(Queue&& obj){
 template<typename T>
 Queue<T>& Queue<T>::operator+(const Queue& obj){
     for(int i = 0; i < obj.size; i++)
-        push(obj.head[i]);
+        enqueue(obj.head[i]);
 
     return *this;
 }
@@ -106,7 +106,7 @@ Queue<T>& Queue<T>::operator+(const Queue& obj){
 
 template<typename T>
 Queue<T>& Queue<T>::operator+(const T& obj){
-    push(obj);
+    enqueue(obj);
     return *this;
 }
 
@@ -136,11 +136,13 @@ std::ostream& operator<<(std::ostream& out, const Queue<T>& obj){
 template<typename T>
 std::istream& operator>>(std::istream& in, Queue<T>& obj){
     int inp_size;
+    std::cout << "Enter the length of your input as an integer: ";
     in >> inp_size;
     T swap;
+    std::cout <<endl<< "Enter your values: "<<endl;
     for(int i = 0; i < inp_size; i++){
         in >> swap;
-        obj.push(swap);
+        obj.enqueue(swap);
     }
     
     return in;
@@ -167,27 +169,43 @@ PriorityQueue<T>::PriorityQueue(PriorityQueue&& obj){
 }
 
 template<typename T>
-T& PriorityQueue<T>::pop(){
+T& PriorityQueue<T>::dequeue(){
     int i = 0;
     for(i; i < MAX_PRIO && container[i].isEmpty(); i++);
-    return container[i].pop();
+    return container[i].dequeue();
 }
 
 template<typename T>
-void PriorityQueue<T>::push(const T& obj){
+void PriorityQueue<T>::enqueue(const T& obj){
     int i = MAX_PRIO - 1;
     for(i; 0 < i && container[i].isEmpty(); i--);
-    container[i].push(obj);
+    container[i].enqueue(obj);
 }
 
 template<typename T>
-void PriorityQueue<T>::push(const int prio_level,const T& obj){
-    conatainer[prio_level].push(obj);
+void PriorityQueue<T>::enqueue(const int prio_level,const T& obj){
+    if (prio_level > MAX_PRIO) {
+        std::range_error err("Cannot have priority greater than max priority.");
+        throw(err);
+    }
+    else if (prio_level < 1) {
+        std::range_error err("Cannot have priority less than 1");
+        throw(err);
+    }
+    container[prio_level-1].enqueue(obj);
 }
 
 template<typename T>
-void PriorityQueue<T>::push(const int prio_level,const Queue<T>& obj){
-    container[prio_level] + obj;
+void PriorityQueue<T>::enqueue(const int prio_level,const Queue<T>& obj){
+    if (prio_level > MAX_PRIO) {
+        std::range_error err("Cannot have priority greater than max priority.");
+        throw(err);
+    }
+    else if (prio_level < 1) {
+        std::range_error err("Cannot have priority less than 1");
+        throw(err);
+    }
+    container[prio_level-1] + obj;
 }
 
 template<typename T>
@@ -237,8 +255,21 @@ std::ostream& operator<<(std::ostream& out, const PriorityQueue<T>& obj){
 // Requires user to enter length of their input first 
 template<typename T>
 std::istream& operator>>(std::istream& in, PriorityQueue<T>& obj){
-    for(int i = 0; i < MAX_PRIO; i++)
-        in >> obj.container[i];
+    int inp_prio;
+    std::cout << "Enter the priority you want to assign to your input as an integer between 1-10: ";
+    in >> inp_prio;
+    in.ignore();
+    std::cout << MAX_PRIO;
+    if (inp_prio > MAX_PRIO) {
+        std::range_error err("Cannot have priority greater than max priority");
+        throw(err);
+    }
+    else if (inp_prio < 1) {
+        std::range_error err("Cannot have priority less than 1");
+        throw(err);
+    }
+    std::cout << "Enter values that you would like to add to the Priority Queue:" << std::endl;
+    in>> obj.container[inp_prio - 1];
 
     return in;
 }

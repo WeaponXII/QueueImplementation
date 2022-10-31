@@ -14,8 +14,8 @@ public:
 
     bool isEmpty() const;
 
-    virtual T& pop();   
-    virtual void push(const T&);
+    virtual T& dequeue();   
+    virtual void enqueue(const T&);
 
     virtual Queue& operator=(const Queue&);
     virtual Queue& operator=(Queue&&);
@@ -29,7 +29,7 @@ public:
     friend std::istream& operator>>(std::istream&, Queue<R>&);
 private:
     void resize(int);
-    int pop_count;
+    int dequeue_count;
     int size;
     int capacity;
     T * head;
@@ -42,10 +42,10 @@ public:
     PriorityQueue(const PriorityQueue&);
     PriorityQueue(PriorityQueue&&);
      
-    T& pop() override;
-    void push(const T&) override;
-    void push(const int, const T&);
-    void push(const int, const Queue<T>&);
+    T& dequeue() override;
+    void enqueue(const T&) override;
+    void enqueue(const int, const T&);
+    void enqueue(const int, const Queue<T>&);
 
     PriorityQueue& operator=(const PriorityQueue&);
     PriorityQueue& operator=(PriorityQueue&&);
