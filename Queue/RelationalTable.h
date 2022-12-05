@@ -1,3 +1,5 @@
+#ifndef RELATIONALTABLE_H
+#define RELATIONALTABLE_H
 #include <string>
 #include <vector>
 #include <functional>
@@ -59,3 +61,4 @@ void RelationalTable::addField(const string& fieldname) {
 void RelationalTable::setValue(const string& pkValue, const string& fieldName, const string& fieldValue) {
 
 }
+#endif
