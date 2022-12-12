@@ -6,24 +6,26 @@ RelationalTable::RelationalTable(double loadThreshold) : loadThreshold(loadThres
 RelationalTable::RelationalTable(const string attNames[], int size, double loadThreshold) : loadThreshold(loadThreshold) {
     capacity = 8;
     rows.resize(capacity);
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < size; i++){
         fieldNames.push_back(attNames[i]);
+        for(int j = 0; j < capacity; j++)
+            rows[j].second.push_back("\0");
+    }
+    
 }
 
 void RelationalTable::addRow(const string values[], int size) {
     unsigned int myHash = hash<string>{}(values[0]) & (capacity - 1);
     int val_iterator = 0;
-    //cout << getSize()<<endl; For testing the resize was successful.
     if (getSize() + 1 >= capacity * loadThreshold) {
         vector<pair<string, vector<string>>> swap = rows;
         rows.clear();
         capacity *= 2;
         rows.resize(capacity);
         for (auto i = swap.begin(); i != swap.end(); i++) {
-            if (!(i->second.empty()) ) {
+            if (!(i->second.empty() || i->second[0] == "\0") ) {
                 string* current_row = new string[size];
                 for (auto j = i->second.begin(); j != i->second.end(); j++, val_iterator++) {
-                    cout << current_row[val_iterator];
                     current_row[val_iterator] = *j;
                 }
                 val_iterator = 0;
@@ -33,18 +35,19 @@ void RelationalTable::addRow(const string values[], int size) {
         }
     }
 
-    if (rows[myHash].first == values[0] && !(rows[myHash].second.empty()))
+    if (rows[myHash].first == values[0] && !(rows[myHash].second.empty() || rows[myHash].second[0] == "\0"))
         return;
 
     int quad_collider = 0;
     bool hashing = true;
+    unsigned int newHash = myHash;
     while (hashing) {
-        int newHash = (myHash + quad_collider^2) % capacity;
-        if (rows[newHash].second.empty()) {
+        newHash = (newHash + quad_collider*quad_collider) % capacity;
+        
+        if (rows[newHash].second.empty() || rows[newHash].second[0] == "\0") {
             rows[newHash].first = values[0];            
-            for (auto i = rows[newHash].second.begin(); i != rows[newHash].second.end(); i++, val_iterator++) {
-                //cout << values[val_iterator];
-                *i = values[val_iterator];
+            for (val_iterator = 0; val_iterator < size; val_iterator++) {
+                rows[newHash].second[val_iterator] = values[val_iterator];
             }
                 
             hashing = false;
@@ -66,16 +69,19 @@ vector<string> RelationalTable::removeRow(const string& pkValue) {
 }
 
 void RelationalTable::setValue(const string& pkValue, const string& fieldName, const string& fieldValue) {
-    unsigned int myHash = hash<string>{}(pkValue);
+    unsigned int newHash = hash<string>{}(pkValue) & (capacity - 1);
     bool hashing = true;
     int quad_collider = 0;
+    /*
     invalid_argument noKeyErr("Key does not exist");
     if (rows.empty())
-        throw noKeyErr;
+        throw noKeyErr;*/
     while (hashing) {
-        int newHash = (myHash + quad_collider ^ 2) % capacity;
+        newHash = (newHash + quad_collider*quad_collider) % capacity;
+
         if (rows[newHash].first == pkValue) {            
             auto j = fieldNames.begin();
+
             for (auto i = rows[newHash].second.begin(); i != rows[newHash].second.end(); i++, j++)
                 if (*j == fieldName)
                     *i = fieldValue;
@@ -87,20 +93,21 @@ void RelationalTable::setValue(const string& pkValue, const string& fieldName, c
 }
 
 string RelationalTable::getValue(const string& pkValue, const string& fieldName) {
-    unsigned int myHash = hash<string>{}(pkValue);
+    unsigned int newHash = hash<string>{}(pkValue) & (capacity - 1);
     bool hashing = true;
     int quad_collider = 0;
     string output;
+    /*
     invalid_argument emptyKeyErr("No values found");
     if (rows.empty())
-        throw emptyKeyErr;
+        throw emptyKeyErr;*/
     while (hashing) {
-        int newHash = (myHash + quad_collider ^ 2 ) % capacity;
+        newHash = (newHash + quad_collider*quad_collider) % capacity;
+
         if (rows[newHash].first == pkValue) {
             auto j = fieldNames.begin();
             for (auto i = rows[newHash].second.begin(); i != rows[newHash].second.end(); i++, j++) {
-                cout << *j;
-if (*j == fieldName)
+                if (*j == fieldName)
                     output = *i;
             }
                 
@@ -112,18 +119,19 @@ if (*j == fieldName)
 }
 
 void RelationalTable::addField(const string& fieldName) {
+    /*
     invalid_argument err("Field name already exists.");
     for (auto i = fieldNames.begin(); i != fieldNames.end(); i++)
         if (*i == fieldName)
-            throw(err);
+            throw(err);*/
     fieldNames.push_back(fieldName);
     for (auto i = rows.begin(); i != rows.end(); i++)
         i->second.push_back("\0");
-
 }
 
 void RelationalTable::removeField(const string& fieldName) {
-    invalid_argument err("Field name already exists.");
+    /*
+    invalid_argument err("Field name already exists.");*/
     bool exists = false;
     int count = 0;
     for (auto i = fieldNames.begin(); i != fieldNames.end(); i++, count++) {
@@ -131,9 +139,9 @@ void RelationalTable::removeField(const string& fieldName) {
             exists = true;
             fieldNames.erase(i);
         }
-    }
+    }/*
     if (!exists)
-        throw(err);
+        throw(err);*/
     fieldNames.push_back(fieldName);
     for (auto i = rows.begin(); i != rows.end(); i++) {
         auto j = i->second.begin() + count;
@@ -144,7 +152,7 @@ void RelationalTable::removeField(const string& fieldName) {
 int RelationalTable::getSize() {
     int sum = 0;
     for (auto i = rows.begin(); i != rows.end(); i++) {
-        if (!(i->second.empty()))
+        if (!(i->second.empty() || i->second[0] == "\0"))
             sum++;
     }
     return sum;
