@@ -7,12 +7,12 @@
 
 using namespace std;
 
-class RelationalTable{
+class RelationalTable {
 public:
-    RelationalTable(double );
-    RelationalTable(const string [], int , double);
-    void addRow(const string [], int);
-    vector<string> removeRow(const string&); 
+    RelationalTable(double loadThreshold = 0.5);
+    RelationalTable(const string[], int, double loadThreshold = 0.5);
+    void addRow(const string[], int);
+    vector<string> removeRow(const string&);
     void setValue(const string&, const string&, const string&);
     string getValue(const string&, const string&);
     void addField(const string&);
