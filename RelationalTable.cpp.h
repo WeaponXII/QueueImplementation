@@ -13,19 +13,21 @@ RelationalTable::RelationalTable(const string attNames[], int size, double loadT
 void RelationalTable::addRow(const string values[], int size) {
     unsigned int myHash = hash<string>{}(values[0]) & (capacity - 1);
     int val_iterator = 0;
- 
+    //cout << getSize()<<endl; For testing the resize was successful.
     if (getSize() + 1 >= capacity * loadThreshold) {
         vector<pair<string, vector<string>>> swap = rows;
         rows.clear();
         capacity *= 2;
         rows.resize(capacity);
         for (auto i = swap.begin(); i != swap.end(); i++) {
-            if (!(i->second.empty())) {
+            if (!(i->second.empty()) ) {
                 string* current_row = new string[size];
-                for (auto j = i->second.begin(); j != i->second.end(); j++, val_iterator++)
+                for (auto j = i->second.begin(); j != i->second.end(); j++, val_iterator++) {
+                    cout << current_row[val_iterator];
                     current_row[val_iterator] = *j;
+                }
                 val_iterator = 0;
-                addRow(current_row, size);
+                //addRow(current_row, size); Seems to be causing the error
                 delete[] current_row;
             }
         }
@@ -39,11 +41,15 @@ void RelationalTable::addRow(const string values[], int size) {
     while (hashing) {
         int newHash = (myHash + quad_collider^2) % capacity;
         if (rows[newHash].second.empty()) {
-            rows[newHash].first = values[0];
-            for (auto i = rows[newHash].second.begin(); i != rows[newHash].second.end(); i++, val_iterator++)
+            rows[newHash].first = values[0];            
+            for (auto i = rows[newHash].second.begin(); i != rows[newHash].second.end(); i++, val_iterator++) {
+                //cout << values[val_iterator];
                 *i = values[val_iterator];
+            }
+                
             hashing = false;
         }
+
         quad_collider++;
     }
 }
