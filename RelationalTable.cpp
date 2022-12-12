@@ -1,4 +1,4 @@
-// RelataionalTable.cpp : This file contains the 'main' function. Program execution begins and ends there.
+// RelationalTable.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
 #include <iostream>
@@ -20,7 +20,8 @@ RelationalTable r1 = RelationalTable();
     cout << "Added fields to table" << endl;
     r1.addRow(example,example->size());
     cout << "Added row to table" << endl;
-    cout << r1.getValue(example[0], test) << endl;
+    cout << r1.getValue(example[0], "Name") << endl;
+    cout << r1.getValue(example[0], "Student") << endl;
     r1.setValue(example[0], test, value);
     cout << r1.getValue(example[0], test) << endl;
     RelationalTable r2 = RelationalTable(secondExample,3);
@@ -31,7 +32,7 @@ RelationalTable r1 = RelationalTable();
     catch (...) {
         cout << "An error occurred" << endl;
     }
-    
+    return 0;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
